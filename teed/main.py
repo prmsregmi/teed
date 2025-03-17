@@ -212,6 +212,10 @@ def parse_args(is_testing=True):
                         type=int,
                         default=-1,     # UDED=15
                         help='Choose a dataset for testing: 0 - 15')
+    parser.add_argument('--choose_train_data',
+                        type=int,
+                        default=0,     # UDED=15
+                        help='Choose a dataset for training: 0 - 15')
     args, _ = parser.parse_known_args()
     # ----------- test -------0--
     TEST_DATA = DATASET_NAMES[args.choose_test_data] # max 8
@@ -219,9 +223,10 @@ def parse_args(is_testing=True):
 
     # Training settings
     # BIPED-B2=1, BIPDE-B3=2, just for evaluation, using LDC trained with 2 or 3 bloacks
-    TRAIN_DATA = DATASET_NAMES[17] # BIPED=0, BRIND=6, MDBD=10, BIPBRI=13
+    TRAIN_DATA = DATASET_NAMES[args.choose_train_data] # BIPED=0, BRIND=6, MDBD=10, BIPBRI=13
     train_inf = dataset_info(TRAIN_DATA, is_linux=IS_LINUX)
     train_dir = train_inf['data_dir']
+    print(TRAIN_DATA, train_inf)
 
     # Data parameters
     parser.add_argument('--input_dir',
