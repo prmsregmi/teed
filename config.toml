@@ -1,5 +1,5 @@
 [general]
-is_testing = true  # Script in testing mode.
+is_testing = false  # Script in testing mode.
 
 [dataset]
 choose_test_data = -1  # Choose a dataset for testing: 0 - 15

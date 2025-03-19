@@ -42,9 +42,9 @@ def list_data(base_dirs=None, data_name="BIPED", simple_list=False, check_files=
             # img_dirs = img_base_dir + '/' + dir_name
             img_dirs = img_base_dir + '/' + dir_name
             for full_path in os.listdir(os.path.join(save_file, img_dirs)):
-                file_name = os.path.splitext(full_path)[0]
+                file_name, ext = os.path.splitext(full_path)
                 files_idcs.append(
-                    (os.path.join(img_dirs + '/' + file_name + '.jpg'),
+                    (os.path.join(img_dirs + '/' + file_name + ext), #".jpg" was in place of ext in the original code
                      os.path.join(gt_base_dir + '/' + dir_name + '/' + file_name + '.png'),))
     # save files
 
