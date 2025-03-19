@@ -1,27 +1,23 @@
-"""
-Hello, welcome on board,
-"""
-from __future__ import print_function
-
-import argparse
 import os
 import time
+import toml
 import platform
 import cv2
 import numpy as np
-os.environ['CUDA_LAUNCH_BLOCKING']="0"
 import torch
 import torch.optim as optim
 from torch.utils.data import DataLoader
 # from thop import profile
 
+from types import SimpleNamespace
 from .dataset import DATASET_NAMES, BipedDataset, TestDataset, dataset_info
 from .loss2 import cats_loss, bdcn_loss2
 from .ted import TED # TEED architecture
 
-from .utils.img_processing import image_normalization, save_image_batch_to_disk, visualize_result, count_parameters
+from .utils.img_processing import save_image_batch_to_disk, visualize_result, count_parameters
 
-is_testing = False # set False to train with TEED model
+
+os.environ['CUDA_LAUNCH_BLOCKING']="0"
 IS_LINUX = True if platform.system()=="Linux" else False
 
 def train_one_epoch(epoch, dataloader, model, criterions, optimizer, device,
@@ -205,162 +201,45 @@ def testPich(checkpoint_path, dataloader, model, device, output_dir, args, resiz
     print("Average time per image: %f.4" % total_duration.mean(), "seconds")
     print("Time spend in the Dataset: %f.4" % total_duration.sum(), "seconds")
 
-def parse_args(is_testing=True):
-    """Parse command line arguments."""
-    parser = argparse.ArgumentParser(description='TEED model')
-    parser.add_argument('--choose_test_data',
-                        type=int,
-                        default=-1,     # UDED=15
-                        help='Choose a dataset for testing: 0 - 15')
-    parser.add_argument('--choose_train_data',
-                        type=int,
-                        default=0,     # UDED=15
-                        help='Choose a dataset for training: 0 - 15')
-    args, _ = parser.parse_known_args()
-    # ----------- test -------0--
-    TEST_DATA = DATASET_NAMES[args.choose_test_data] # max 8
+def parse_config(config_path="config.toml"):
+    """Parse the TOML config and return (args, train_inf) with flat attribute-style access."""
+
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(f"Configuration file {config_path} not found.")
+
+    config_data = toml.load(config_path)
+
+    # Dataset-dependent values
+    TEST_DATA = DATASET_NAMES[config_data['dataset']['choose_test_data']]
+    TRAIN_DATA = DATASET_NAMES[config_data['dataset']['choose_train_data']]
     test_inf = dataset_info(TEST_DATA, is_linux=IS_LINUX)
-
-    # Training settings
-    # BIPED-B2=1, BIPDE-B3=2, just for evaluation, using LDC trained with 2 or 3 bloacks
-    TRAIN_DATA = DATASET_NAMES[args.choose_train_data] # BIPED=0, BRIND=6, MDBD=10, BIPBRI=13
     train_inf = dataset_info(TRAIN_DATA, is_linux=IS_LINUX)
-    train_dir = train_inf['data_dir']
-    print(TRAIN_DATA, train_inf)
 
-    # Data parameters
-    parser.add_argument('--input_dir',
-                        type=str,
-                        default=train_dir,
-                        help='the path to the directory with the input data.')
-    parser.add_argument('--input_val_dir',
-                        type=str,
-                        default=test_inf['data_dir'],
-                        help='the path to the directory with the input data for validation.')
-    parser.add_argument('--output_dir',
-                        type=str,
-                        default='checkpoints',
-                        help='the path to output the results.')
-    parser.add_argument('--train_data',
-                        type=str,
-                        choices=DATASET_NAMES,
-                        default=TRAIN_DATA,
-                        help='Name of the dataset.')# TRAIN_DATA,BIPED-B3
-    parser.add_argument('--test_data',
-                        type=str,
-                        choices=DATASET_NAMES,
-                        default=TEST_DATA,
-                        help='Name of the dataset.')
-    parser.add_argument('--test_list',
-                        type=str,
-                        default=test_inf['test_list'],
-                        help='Dataset sample indices list.')
-    parser.add_argument('--train_list',
-                        type=str,
-                        default=train_inf['train_list'],
-                        help='Dataset sample indices list.')
-    parser.add_argument('--is_testing',type=bool,
-                        default=is_testing,
-                        help='Script in testing mode.')
-    parser.add_argument('--predict_all',
-                        type=bool,
-                        default=False,
-                        help='True: Generate all TEED outputs in all_edges ')
-    parser.add_argument('--up_scale',
-                        type=bool,
-                        default=False, # for Upsale test set in 30%
-                        help='True: up scale x1.5 test image')  # Just for test
+    # Update sections with computed values
+    config_data['dataset']['train_data'] = TRAIN_DATA
+    config_data['dataset']['test_data'] = TEST_DATA
+    config_data['paths']['input_dir'] = train_inf['data_dir']
+    config_data['paths']['input_val_dir'] = test_inf['data_dir']
+    config_data['training']['train_list'] = train_inf['train_list']
+    config_data['training']['test_list'] = test_inf['test_list']
+    config_data['testing']['test_img_width'] = test_inf['img_width']
+    config_data['testing']['test_img_height'] = test_inf['img_height']
+    config_data['data_mean']['mean_test'] = test_inf['mean']
+    config_data['data_mean']['mean_train'] = train_inf['mean']
 
-    parser.add_argument('--resume',
-                        type=bool,
-                        default=False,
-                        help='use previous trained data')  # Just for test
-    parser.add_argument('--checkpoint_data',
-                        type=str,
-                        default='5/5_model.pth',# 37 for biped 60 MDBD
-                        help='Checkpoint path.')
-    parser.add_argument('--test_img_width',
-                        type=int,
-                        default=test_inf['img_width'],
-                        help='Image width for testing.')
-    parser.add_argument('--test_img_height',
-                        type=int,
-                        default=test_inf['img_height'],
-                        help='Image height for testing.')
-    parser.add_argument('--res_dir',
-                        type=str,
-                        default='result',
-                        help='Result directory')
-    parser.add_argument('--use_gpu',type=int,
-                        default=0, help='use GPU')
-    parser.add_argument('--log_interval_vis',
-                        type=int,
-                        default=200,# 100
-                        help='Interval to visualize predictions. 200')
-    parser.add_argument('--show_log', type=int, default=20, help='display logs')
-    parser.add_argument('--epochs',
-                        type=int,
-                        default=8,
-                        metavar='N',
-                        help='Number of training epochs (default: 25).')
-    parser.add_argument('--lr', default=8e-4, type=float,
-                        help='Initial learning rate. =1e-3') # 1e-3
-    parser.add_argument('--lrs', default=[8e-5], type=float,
-                        help='LR for epochs') #  [7e-5]
-    parser.add_argument('--wd', type=float, default=2e-4, metavar='WD',
-                        help='weight decay (Good 5e-4/1e-4  )') # good 12e-5
-    parser.add_argument('--adjust_lr', default=[4], type=int,
-                        help='Learning rate step size.')  # [4] [6,9,19]
-    parser.add_argument('--version_notes',
-                        default='TEED BIPED+BRIND-trainingdataLoader BRIND light AF -USNet--noBN xav init normal bdcnLoss2+cats2loss +DoubleFusion-3AF, AF sum',
-                        type=str,
-                        help='version notes')
-    parser.add_argument('--batch_size',
-                        type=int,
-                        default=8,
-                        metavar='B',
-                        help='the mini-batch size (default: 8)')
-    parser.add_argument('--workers',
-                        default=8,
-                        type=int,
-                        help='The number of workers for the dataloaders.')
-    parser.add_argument('--tensorboard',type=bool,
-                        default=True,
-                        help='Use Tensorboard for logging.'),
-    parser.add_argument('--img_width',
-                        type=int,
-                        default=300,
-                        help='Image width for training.') # BIPED 352/300 BRIND 256 MDBD 480
-    parser.add_argument('--img_height',
-                        type=int,
-                        default=300,
-                        help='Image height for training.') # BIPED 352/300 BSDS 352/320
-    parser.add_argument('--channel_swap',
-                        default=[2, 1, 0],
-                        type=int)
-    parser.add_argument('--resume_chpt',
-                        default='result/resume/',
-                        type=str,
-                        help='resume training')
-    parser.add_argument('--crop_img',
-                        default=True,
-                        type=bool,
-                        help='If true crop training images, else resize images to match image width and height.')
-    parser.add_argument('--mean_test',
-                        default=test_inf['mean'],
-                        type=float)
-    parser.add_argument('--mean_train',
-                        default=train_inf['mean'],
-                        type=float)  # [103.939,116.779,123.68,137.86] [104.00699, 116.66877, 122.67892]
+    # Flatten the configuration to a single dictionary
+    flat_config = {}
+    for section, values in config_data.items():
+        if isinstance(values, dict):
+            flat_config.update(values)
+        else:
+            flat_config[section] = values
 
-    args, _ = parser.parse_known_args()
+    args = SimpleNamespace(**flat_config)
     return args, train_inf
 
-
 def run_teed(args, train_inf):
-
     # Tensorboard summary writer
-
     # torch.autograd.set_detect_anomaly(True)
     tb_writer = None
     training_dir = os.path.join(args.output_dir,args.train_data)
@@ -396,7 +275,7 @@ def run_teed(args, train_inf):
     # Instantiate model and move it to the computing device
     model = TED().to(device)
     # model = nn.DataParallel(model)
-    ini_epoch =0
+    ini_epoch = 0
     if not args.is_testing:
         if args.resume:
             checkpoint_path2= os.path.join(args.output_dir, 'BIPED-54-B4',args.checkpoint_data)
@@ -484,14 +363,8 @@ def run_teed(args, train_inf):
         img_test_dir = os.path.join(output_dir_epoch, args.test_data + '_res')
         os.makedirs(output_dir_epoch,exist_ok=True)
         os.makedirs(img_test_dir,exist_ok=True)
-        print("**************** Validating the training from the scratch **********")
-        # validate_one_epoch(epoch,
-        #                    dataloader_val,
-        #                    model,
-        #                    device,
-        #                    img_test_dir,
-        #                    arg=args,test_resize=if_resize_img)
 
+        print("**************** Validating the training from the scratch **********")
         avg_loss =train_one_epoch(epoch,dataloader_train,
                         model, criterion,
                         optimizer,
@@ -523,8 +396,7 @@ def run_teed(args, train_inf):
 
 def main():
     # os.system(" ".join(command))
-    is_testing =False # True to use TEED for testing
-    args, train_info = parse_args(is_testing=is_testing)
+    args, train_info = parse_config()
     run_teed(args, train_info)
 
 if __name__ == '__main__':

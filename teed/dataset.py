@@ -29,19 +29,35 @@ DATASET_NAMES = [
 ]  # 8
 # [108, 109.451,112.230,137.86]
 BIPED_mean = [103.939,116.779,123.68,137.86]
-
 def dataset_info(dataset_name, is_linux=True):
-    if is_linux:
-        config = {
+    config = {
             'UDED': {
                 'img_height': 512,  # 321
                 'img_width': 512,  # 481
                 'train_list': None,
                 'test_list': 'test_pair.lst',
-                'data_dir': '/root/workspace/datasets/UDED',  # mean_rgb
+                'data_dir': '/data/UDED',  # mean_rgb
                 'yita': 0.5,
                 'mean': [104.007, 116.669, 122.679, 137.86]# [104.007, 116.669, 122.679, 137.86]
             }, #[98.939,111.779,117.68,137.86]
+            'BIPED': {
+                'img_height': 720, #720 # 1088
+                'img_width': 1280, # 1280 5 1920
+                'test_list': 'test_pair.lst',
+                'train_list': 'train_pair.lst', # Base augmentation
+                'data_dir': 'data/BIPED/BIPED/',  # mean_rgb
+                'yita': 0.5,
+                'mean':BIPED_mean
+            },
+            'CLASSIC': {
+                'img_height': 720,#
+                'img_width': 1280,# 512
+                'test_list': None,
+                'train_list': 'train_pair.lst',
+                'data_dir': 'data/synthetic_train/BIPED/',  # mean_rgb
+                'yita': 0.5,
+                'mean': [104.007, 116.669, 122.679, 137.86]
+            },
             'BSDS': {
                 'img_height': 512, #321
                 'img_width': 512, #481
@@ -63,14 +79,14 @@ def dataset_info(dataset_name, is_linux=True):
                 'mean': [104.007, 116.669, 122.679, 137.86]
             },
             'ICEDA': {
-            'img_height': 1024,  # 321
-            'img_width': 1408,  # 481
-            'train_list': None,
-            'test_list': 'test_pair.lst',
-            'data_dir': '/root/workspace/datasets/ICEDA',  # mean_rgb
-            'yita': 0.5,
-            'mean': [104.007, 116.669, 122.679, 137.86]
-        },
+                'img_height': 1024,  # 321
+                'img_width': 1408,  # 481
+                'train_list': None,
+                'test_list': 'test_pair.lst',
+                'data_dir': '/root/workspace/datasets/ICEDA',  # mean_rgb
+                'yita': 0.5,
+                'mean': [104.007, 116.669, 122.679, 137.86]
+            },
             'BSDS300': {
                 'img_height': 512, #321
                 'img_width': 512, #481
@@ -116,55 +132,42 @@ def dataset_info(dataset_name, is_linux=True):
                 'yita': 0.3,
                 'mean': [104.007, 116.669, 122.679, 137.86]
             },
-            'BIPED': {
-                'img_height': 720, #720 # 1088
-                'img_width': 1280, # 1280 5 1920
+            'BIPED-B2': {
+                'img_height': 720,  # 720
+                'img_width': 1280,  # 1280
                 'test_list': 'test_pair.lst',
-                'train_list': 'train_pair0.lst', # Base augmentation
-                # 'train_list': 'train_pairB3.lst', # another augmentation
-                # 'train_list': 'train_pairB5.lst', # Last augmentation
-                'data_dir': '/root/workspace/datasets/BIPED',  # mean_rgb
+                'train_list': 'train_rgb.lst',
+                'data_dir': 'C:/Users/xavysp/dataset/BIPED',  # WIN: '../.../dataset/BIPED/edges'
                 'yita': 0.5,
                 'mean':BIPED_mean
-            #
             },
-            'CLASSIC': {
-                'img_height': 720,#
-                'img_width': 1280,# 512
-                'test_list': None,
-                'train_list': 'train_pair.lst',
-                'data_dir': 'data/synthetic_train/BIPED',  # mean_rgb
+            'BIPED-B3': {
+                'img_height': 720,  # 720
+                'img_width': 1280,  # 1280
+                'test_list': 'test_pair.lst',
+                'train_list': 'train_rgb.lst',
+                'data_dir': 'C:/Users/xavysp/dataset/BIPED',  # WIN: '../.../dataset/BIPED/edges'
                 'yita': 0.5,
-                'mean': [104.007, 116.669, 122.679, 137.86]
+                'mean':BIPED_mean
             },
-            'BIPED-B2': {'img_height': 720,  # 720
-                         'img_width': 1280,  # 1280
-                         'test_list': 'test_pair.lst',
-                         'train_list': 'train_rgb.lst',
-                         'data_dir': 'C:/Users/xavysp/dataset/BIPED',  # WIN: '../.../dataset/BIPED/edges'
-                         'yita': 0.5,
-                         'mean':BIPED_mean},
-            'BIPED-B3': {'img_height': 720,  # 720
-                         'img_width': 1280,  # 1280
-                         'test_list': 'test_pair.lst',
-                         'train_list': 'train_rgb.lst',
-                         'data_dir': 'C:/Users/xavysp/dataset/BIPED',  # WIN: '../.../dataset/BIPED/edges'
-                         'yita': 0.5,
-                         'mean':BIPED_mean},
-            'BIPED-B5': {'img_height': 720,  # 720
-                         'img_width': 1280,  # 1280
-                         'test_list': 'test_pair.lst',
-                         'train_list': 'train_rgb.lst',
-                         'data_dir': 'C:/Users/xavysp/dataset/BIPED',  # WIN: '../.../dataset/BIPED/edges'
-                         'yita': 0.5,
-                        'mean':BIPED_mean},
-            'BIPED-B6': {'img_height': 720,  # 720
-                         'img_width': 1280,  # 1280
-                         'test_list': 'test_pair.lst',
-                         'train_list': 'train_rgb.lst',
-                         'data_dir': 'C:/Users/xavysp/dataset/BIPED',  # WIN: '../.../dataset/BIPED/edges'
-                         'yita': 0.5,
-                         'mean':BIPED_mean},
+            'BIPED-B5': {
+                'img_height': 720,  # 720
+                'img_width': 1280,  # 1280
+                'test_list': 'test_pair.lst',
+                'train_list': 'train_rgb.lst',
+                'data_dir': 'C:/Users/xavysp/dataset/BIPED',  # WIN: '../.../dataset/BIPED/edges'
+                'yita': 0.5,
+                        'mean':BIPED_mean
+            },
+            'BIPED-B6': {
+                'img_height': 720,  # 720
+                'img_width': 1280,  # 1280
+                'test_list': 'test_pair.lst',
+                'train_list': 'train_rgb.lst',
+                'data_dir': 'C:/Users/xavysp/dataset/BIPED',  # WIN: '../.../dataset/BIPED/edges'
+                'yita': 0.5,
+                'mean':BIPED_mean
+            },
             'DCD': {
                 'img_height': 352, #240
                 'img_width': 480,# 360
@@ -174,126 +177,6 @@ def dataset_info(dataset_name, is_linux=True):
                 'yita': 0.2,
                 'mean': [104.007, 116.669, 122.679, 137.86]
             }
-        }
-    else:
-        config = {
-            'UDED': {
-                'img_height': 512,  # 321
-                'img_width': 512,  # 481
-                'train_list': None,
-                'test_list': 'test_pair.lst',
-                'data_dir': 'C:/dataset/UDED',  # mean_rgb
-                'yita': 0.5,
-                'mean':[104.007, 116.669, 122.679, 137.86] # [183.939,196.779,203.68,137.86] # [104.007, 116.669, 122.679, 137.86]
-            },
-            'BSDS': {'img_height': 480,  # 321
-                     'img_width': 480,  # 481
-                     'test_list': 'test_pair.lst',
-                     'data_dir': 'C:/dataset/BSDS',  # mean_rgb
-                     'yita': 0.5,
-                    'mean':[103.939, 116.669, 122.679, 137.86] },
-            # [103.939, 116.669, 122.679, 137.86]
-            #[159.510, 159.451,162.230,137.86]
-            'BRIND': {
-                'img_height': 512,  # 321
-                'img_width': 512,  # 481
-                'train_list': 'train_pair_all.lst',
-                # all train_pair_all.lst
-                # less train_pair.lst
-                'test_list': 'test_pair.lst',
-                'data_dir': 'C:/dataset/BRIND',  # mean_rgb
-                'yita': 0.5,
-                'mean': [104.007, 116.669, 122.679, 137.86]
-            },
-            'ICEDA': {
-            'img_height': 1024,  # 321
-            'img_width': 1408,  # 481
-            'train_list': None,
-            'test_list': 'test_pair.lst',
-            'data_dir': 'C:/dataset/ICEDA',  # mean_rgb
-            'yita': 0.5,
-            'mean': [104.007, 116.669, 122.679, 137.86]
-        },
-            'BSDS300': {'img_height': 512,  # 321
-                        'img_width': 512,  # 481
-                        'test_list': 'test_pair.lst',
-                        'data_dir': 'C:/Users/xavysp/dataset/BSDS300',  # NIR
-                        'yita': 0.5,
-                    'mean': [104.007, 116.669, 122.679, 137.86]},
-            'PASCAL': {'img_height': 375,
-                       'img_width': 500,
-                       'test_list': 'test_pair.lst',
-                       'data_dir': 'C:/dataset/PASCAL',  # mean_rgb
-                       'yita': 0.3,
-                    'mean': [104.007, 116.669, 122.679, 137.86]},
-            'CID': {'img_height': 512,
-                    'img_width': 512,
-                    'test_list': 'test_pair.lst',
-                    'data_dir': 'C:/dataset/CID',  # mean_rgb
-                    'yita': 0.3,
-                    'mean': [104.007, 116.669, 122.679, 137.86]},
-            'NYUD': {'img_height': 425,
-                     'img_width': 560,
-                     'test_list': 'test_pair.lst',
-                     'data_dir': 'C:/dataset/NYUD',  # mean_rgb
-                     'yita': 0.5,
-                    'mean': [104.007, 116.669, 122.679, 137.86]},
-            'MDBD': {'img_height': 720,
-                         'img_width': 1280,
-                         'test_list': 'test_pair.lst',
-                         'train_list': 'train_pair.lst',
-                         'data_dir': 'C:/dataset/MDBD',  # mean_rgb
-                         'yita': 0.3,
-                         'mean': [104.007, 116.669, 122.679, 137.86]},
-            'BIPED': {'img_height': 720,  # 720
-                      'img_width': 1280,  # 1280
-                      'test_list': 'test_pair.lst',
-                      'train_list': 'train_pair.lst',
-                      # 'train_list': 'train_rgb.lst',
-                      'data_dir': 'data/BIPED/BIPED/',  # WIN: '../.../dataset/BIPED/edges'
-                      'yita': 0.5,
-                      'mean':BIPED_mean},
-            'BIPED-B2': {'img_height': 720,  # 720
-                      'img_width': 1280,  # 1280
-                      'test_list': 'test_pair.lst',
-                      'train_list': 'train_rgb.lst',
-                      'data_dir': 'C:/dataset/BIPED',  # WIN: '../.../dataset/BIPED/edges'
-                      'yita': 0.5,
-                      'mean':BIPED_mean},
-            'BIPED-B3': {'img_height': 720,  # 720
-                      'img_width': 1280,  # 1280
-                      'test_list': 'test_pair.lst',
-                      'train_list': 'train_rgb.lst',
-                      'data_dir': 'C:/dataset/BIPED',  # WIN: '../.../dataset/BIPED/edges'
-                      'yita': 0.5,
-                      'mean':BIPED_mean},
-            'BIPED-B5': {'img_height': 720,  # 720
-                         'img_width': 1280,  # 1280
-                         'test_list': 'test_pair.lst',
-                         'train_list': 'train_rgb.lst',
-                         'data_dir': 'C:/Users/xavysp/dataset/BIPED',  # WIN: '../.../dataset/BIPED/edges'
-                         'yita': 0.5,
-                         'mean':BIPED_mean},
-            'BIPED-B6': {'img_height': 720,  # 720
-                         'img_width': 1280,  # 1280
-                         'test_list': 'test_pair.lst',
-                         'train_list': 'train_rgb.lst',
-                         'data_dir': 'C:/Users/xavysp/dataset/BIPED',  # WIN: '../.../dataset/BIPED/edges'
-                         'yita': 0.5,
-                         'mean':BIPED_mean},
-            'CLASSIC': {'img_height': 512,
-                        'img_width': 512,
-                        'test_list': None,
-                        'train_list': 'train_pair.lst',
-                        'data_dir': 'data/synthetic_train/BIPED',  # mean_rgb
-                        'yita': 0.5,
-                        'mean': [104.007, 116.669, 122.679, 137.86]},
-            'DCD': {'img_height': 240,
-                    'img_width': 360,
-                    'test_list': 'test_pair.lst',
-                    'data_dir': 'C:/dataset/DCD',  # mean_rgb
-                    'yita': 0.2,
-                    'mean': [104.007, 116.669, 122.679, 137.86]}
         }
     return config[dataset_name]
 
@@ -309,7 +192,7 @@ class TestDataset(Dataset):
         if test_data not in DATASET_NAMES:
             raise ValueError(f"Unsupported dataset: {test_data}")
 
-        self.data_root = data_root + '/edges/imgs/train/rgbr/real/'
+        self.data_root = data_root + 'edges/imgs/test/rgbr/'
         self.test_data = test_data
         self.test_list = test_list
         self.args = arg

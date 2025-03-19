@@ -1,0 +1,41 @@
+[general]
+is_testing = true  # Script in testing mode.
+
+[dataset]
+choose_test_data = -1  # Choose a dataset for testing: 0 - 15
+choose_train_data = -1  # Choose a dataset for training: 0 - 15
+
+[paths]
+output_dir = "checkpoints"  # The path to output the results.
+res_dir = "result"  # Result directory.
+resume_chpt = "result/resume/"  # Resume training.
+
+[training]
+batch_size = 8  # The mini-batch size (default: 8)
+epochs = 20  # Number of training epochs (default: 25).
+lr = 0.0008  # Initial learning rate. =1e-3
+lrs = [0.00008]  # LR for epochs.
+wd = 0.0002  # Weight decay (Good 5e-4/1e-4  )
+adjust_lr = [4]  # Learning rate step size.
+workers = 8  # The number of workers for the dataloaders.
+tensorboard = true  # Use Tensorboard for logging.
+use_gpu = 0  # Use GPU.
+checkpoint_data = "6_model_original.pth"  # Checkpoint path.
+
+[image]
+img_width = 300  # Image width for training.
+img_height = 300  # Image height for training.
+channel_swap = [2, 1, 0]  # Channel swap order.
+crop_img = true  # If true crop training images, else resize images to match image width and height.
+
+[logging]
+log_interval_vis = 200  # Interval to visualize predictions.
+show_log = 20  # Display logs.
+version_notes = "TEED BIPED+BRIND-trainingdataLoader BRIND light AF -USNet"  # Version notes.
+
+[testing]
+predict_all = false  # True: Generate all TEED outputs in all_edges
+up_scale = false  # True: up scale x1.5 test image
+resume = false  # Use previous trained data.
+
+[data_mean]

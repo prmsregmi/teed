@@ -621,7 +621,7 @@ def gamma_data(data_dir,augment_both=True, in_gt=False):
     print("... gamma correction:  data augmentation terminated")
 
 #  main tool for dataset augmentation
-def augment_data(base_dir,augment_both, use_all_type=True):
+def augment_data(base_dir, augment_both, use_all_type=True, rotation = False):
     """ BIPED dataset augmentation with the last updates in
     LDC and TEED models
 
@@ -640,7 +640,6 @@ def augment_data(base_dir,augment_both, use_all_type=True):
 
     # ********** single RGB or NIR not rested just GT  ********
     splitting_up = use_all_type #use_all_type True to augment by splitting up
-    rotation = use_all_type
     flipping = use_all_type
     correction_gamma = use_all_type
 

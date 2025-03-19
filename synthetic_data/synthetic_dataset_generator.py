@@ -208,8 +208,8 @@ def generate_synthetic():
             png_dir=png_dir,
             output_dir=output_dir,
             img_type=img_type,  # Use the terminal argument or default
-            num_synthetic=100,  # Number of synthetic background samples
-            num_real=100,  # Number of real image-based samples
+            num_synthetic=5000,  # Number of synthetic background samples
+            num_real=500,  # Number of real image-based samples
             texture_dir=texture_dir,
             # image_size=(1280, 1280),
             # preprocessing_size=(512, 512)
