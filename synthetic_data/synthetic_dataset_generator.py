@@ -135,8 +135,8 @@ def generate_synthetic_sample(image_size, num_synthetic, preprocessing_size, out
             outer_edges = cv2.resize(outer_edges, preprocessing_size[::-1], interpolation=cv2.INTER_CUBIC)
 
         base_name = f'synthetic_shapes_{idx:04d}'
-        cv2.imwrite(str(output_dir / 'images' / f'{base_name}.png'), image)
-        cv2.imwrite(str(output_dir / 'masks' / f'{base_name}.png'), outer_edges)
+        cv2.imwrite(str(output_dir / 'imgs/train/rgbr/real' / f'{base_name}.png'), image)
+        cv2.imwrite(str(output_dir / 'edge_maps/train/rgbr/real' / f'{base_name}.png'), outer_edges)
 
 
 def generate_real_image_sample(image_size, num_real, real_img_dir, preprocessing_size, output_dir, img_type, png_dir):
@@ -179,16 +179,16 @@ def generate_real_image_sample(image_size, num_real, real_img_dir, preprocessing
             outer_edges = cv2.resize(outer_edges, preprocessing_size[::-1], interpolation=cv2.INTER_CUBIC)
 
         base_name = f'real_shapes_{idx:04d}'
-        cv2.imwrite(str(output_dir / 'images' / f'{base_name}.png'), image)
-        cv2.imwrite(str(output_dir / 'masks' / f'{base_name}.png'), outer_edges)
+        cv2.imwrite(str(output_dir / 'imgs/train/rgbr/real' / f'{base_name}.png'), image)
+        cv2.imwrite(str(output_dir / 'edge_maps/train/rgbr/real' / f'{base_name}.png'), outer_edges)
 
 
 def process_and_save_images(real_img_dir, png_dir, output_dir, img_type, num_synthetic, num_real,
                             texture_dir, image_size=(720, 1280), preprocessing_size=(720, 1280)):
     """Generate and save both synthetic and real-image-based samples"""
     output_dir = Path(output_dir)
-    (output_dir / 'images').mkdir(parents=True, exist_ok=True)
-    (output_dir / 'masks').mkdir(parents=True, exist_ok=True)
+    (output_dir / 'imgs/train/rgbr/real').mkdir(parents=True, exist_ok=True)
+    (output_dir / 'edge_maps/train/rgbr/real').mkdir(parents=True, exist_ok=True)
 
         
     generate_real_image_sample(image_size, num_real, real_img_dir, preprocessing_size, output_dir, img_type, png_dir)
@@ -200,7 +200,7 @@ def generate_synthetic():
     # Example usage
     real_img_dir = "./data/BIPED/BIPED/edges/imgs/train/rgbr/real"
     png_dir = "./data/png/input"
-    output_dir = "./data/synthetic_train"
+    output_dir = "./data/synthetic_train/BIPED/edges"
     texture_dir = "./data/textures"
 
     process_and_save_images(
