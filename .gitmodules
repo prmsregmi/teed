@@ -1,0 +1,3 @@
+[submodule "external/edge_eval"]
+	path = external/edge_eval
+	url = https://github.com/Walstruzz/edge_eval_python.git

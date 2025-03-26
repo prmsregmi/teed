@@ -1,9 +1,9 @@
 [general]
-is_testing = false  # Script in testing mode.
+is_testing = true  # Script in testing mode.
 
 [dataset]
 choose_test_data = -1  # Choose a dataset for testing: 0 - 15
-choose_train_data = -1  # Choose a dataset for training: 0 - 15
+choose_train_data = 0  # Choose a dataset for training: 0 - 15
 
 [paths]
 output_dir = "checkpoints"  # The path to output the results.
@@ -20,7 +20,7 @@ adjust_lr = [4]  # Learning rate step size.
 workers = 8  # The number of workers for the dataloaders.
 tensorboard = true  # Use Tensorboard for logging.
 use_gpu = 0  # Use GPU.
-checkpoint_data = "6_model_original.pth"  # Checkpoint path.
+checkpoint_data = "4_model.pth"  # Checkpoint path.
 
 [image]
 img_width = 300  # Image width for training.

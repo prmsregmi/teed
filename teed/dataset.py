@@ -54,7 +54,7 @@ def dataset_info(dataset_name, is_linux=True):
                 'img_width': 1280,# 512
                 'test_list': None,
                 'train_list': 'train_pair.lst',
-                'data_dir': 'data/synthetic_train/BIPED/',  # mean_rgb
+                'data_dir': 'data/BIPED/BIPED/',  # mean_rgb
                 'yita': 0.5,
                 'mean': [104.007, 116.669, 122.679, 137.86]
             },
