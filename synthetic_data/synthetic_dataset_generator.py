@@ -194,7 +194,7 @@ def process_and_save_images(real_img_dir, png_dir, output_dir, img_type, num_syn
     generate_real_image_sample(image_size, num_real, real_img_dir, preprocessing_size, output_dir, img_type, png_dir)
     generate_synthetic_sample(image_size, num_synthetic, preprocessing_size, output_dir, img_type, png_dir, texture_dir)
 
-def generate_synthetic():
+def generate_synthetic(real, synthetic):
     img_type = "png"  # shape, png
 
     # Example usage
@@ -208,12 +208,12 @@ def generate_synthetic():
             png_dir=png_dir,
             output_dir=output_dir,
             img_type=img_type,  # Use the terminal argument or default
-            num_synthetic=5000,  # Number of synthetic background samples
-            num_real=500,  # Number of real image-based samples
+            num_synthetic=synthetic,  # Number of synthetic background samples
+            num_real=real,  # Number of real image-based samples
             texture_dir=texture_dir,
             # image_size=(1280, 1280),
             # preprocessing_size=(512, 512)
     )
 
 if __name__ == "__main__":
-    generate_synthetic()
+    generate_synthetic(250, 500)

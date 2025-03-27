@@ -121,13 +121,13 @@ def save_image_batch_to_disk(tensor, output_dir, file_names, img_shape=None, arg
             for i in range(tmp.shape[0]):
                 tmp_img = tmp[i]
                 tmp_img = np.uint8(image_normalization(tmp_img))
-                tmp_img = cv2.bitwise_not(tmp_img)
+                # tmp_img = cv2.bitwise_not(tmp_img)
                 # tmp_img[tmp_img < 0.0] = 0.0
                 # tmp_img = 255.0 * (1.0 - tmp_img)
                 if tmp2 is not None:
                     tmp_img2 = tmp2[i]
                     tmp_img2 = np.uint8(image_normalization(tmp_img2))
-                    tmp_img2 = cv2.bitwise_not(tmp_img2)
+                    # tmp_img2 = cv2.bitwise_not(tmp_img2)
 
                 # Resize prediction to match input image size
                 if not tmp_img.shape[1] == i_shape[0] or not tmp_img.shape[0] == i_shape[1]:
@@ -227,7 +227,7 @@ def visualize_result(imgs_list, arg):
             tmp = np.squeeze(tmp)
             if len(tmp.shape) == 2:
                 tmp = np.uint8(image_normalization(tmp))
-                tmp = cv2.bitwise_not(tmp)
+                # tmp = cv2.bitwise_not(tmp)
                 tmp = cv2.cvtColor(tmp, cv2.COLOR_GRAY2BGR)
             else:
                 tmp = np.uint8(image_normalization(tmp))
@@ -276,7 +276,7 @@ if __name__ == '__main__':
 
         # print(img_name, '   ', gt_name)
         tmp_img = cv2.imread(os.path.join(img_base_dir,img_name),0)
-        tmp_img = cv2.bitwise_not(tmp_img) # if the image's background
+        # tmp_img = cv2.bitwise_not(tmp_img) # if the image's background
         # is white uncomment this line
         tmp_gt = cv2.imread(os.path.join(gt_base_dir,gt_name),0)
         # print(f"image {img_name} {tmp_img.shape}")

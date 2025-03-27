@@ -36,7 +36,7 @@ def dataset_info(dataset_name, is_linux=True):
                 'img_width': 512,  # 481
                 'train_list': None,
                 'test_list': 'test_pair.lst',
-                'data_dir': '/data/UDED',  # mean_rgb
+                'data_dir': 'data/UDED/',  # mean_rgb
                 'yita': 0.5,
                 'mean': [104.007, 116.669, 122.679, 137.86]# [104.007, 116.669, 122.679, 137.86]
             }, #[98.939,111.779,117.68,137.86]
@@ -191,8 +191,7 @@ class TestDataset(Dataset):
                  ):
         if test_data not in DATASET_NAMES:
             raise ValueError(f"Unsupported dataset: {test_data}")
-
-        self.data_root = data_root + 'edges/imgs/test/rgbr/'
+        self.data_root = data_root
         self.test_data = test_data
         self.test_list = test_list
         self.args = arg
@@ -219,7 +218,6 @@ class TestDataset(Dataset):
 
             list_name = os.path.join(self.data_root, self.test_list)
             if self.test_data.upper() in ['BIPED', 'BRIND','UDED','ICEDA']:
-
                 with open(list_name) as f:
                     files = json.load(f)
                 for pair in files:
@@ -264,8 +262,10 @@ class TestDataset(Dataset):
             img_dir = self.data_root
             gt_dir = None
         else:
-            img_dir = self.data_root
-            gt_dir = self.data_root
+            # img_dir = self.data_root
+            # gt_dir = self.data_root
+            img_dir = ""
+            gt_dir = ""
 
         # load data
         image = cv2.imread(os.path.join(img_dir, image_path), cv2.IMREAD_COLOR)

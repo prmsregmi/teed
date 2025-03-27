@@ -65,10 +65,10 @@ def list_data(base_dirs=None, data_name="BIPED", simple_list=False, check_files=
     #     cv_imshow(img, 'rgb image')
     #     cv_imshow(gt, 'gt image')
 
-def main(dataset_dir):
+def main(dataset_dir, rotation = False):
     # Data augmentation
     augment_both = True  # to augment the RGB and target (edge_map) image at the same time
-    augment_data(base_dir=dataset_dir, augment_both=augment_both, use_all_type=True)
+    augment_data(base_dir=dataset_dir, augment_both=augment_both, use_all_type=True, rotation=rotation)
 
     # Data augmentation list maker>>> train_pair.lst
     list_data(dataset_dir,"BIPED")
