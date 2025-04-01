@@ -1,3 +1,6 @@
 [submodule "external/edge_eval"]
 	path = external/edge_eval
 	url = git@github.com:prmsregmi/edge_eval_python.git
+[submodule "synthetic_data"]
+	path = synthetic_data
+	url = git@github.com:prmsregmi/synthetic_data.git
