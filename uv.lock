@@ -812,6 +812,15 @@ wheels = [
 ]
 
 [[package]]
+name = "perlin-noise"
+version = "1.13"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/bd/1e/571287a516c1ef00d2c65316ffa39ce1078510a015fa72c27338e3ecbfff/perlin_noise-1.13.tar.gz", hash = "sha256:0e0f074743336fbe9cf2cdbdeb74c75d43780a8b3cbc3415859cd396ab4da177", size = 6247 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4d/b2/c7bd5f926f0e2cf3a4cf21c527f6d1b8f43c84bbfcd5aa32f47c7c14cc89/perlin_noise-1.13-py3-none-any.whl", hash = "sha256:09f274c8da38f5a2a48b1626032a1b7738990df758a3bc7549ff3464869c6ca4", size = 5847 },
+]
+
+[[package]]
 name = "pexpect"
 version = "4.9.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1172,6 +1181,7 @@ dependencies = [
     { name = "matplotlib", marker = "python_full_version >= '3.12'" },
     { name = "numpy", marker = "python_full_version >= '3.12'" },
     { name = "opencv-python", marker = "python_full_version >= '3.12'" },
+    { name = "perlin-noise", marker = "python_full_version >= '3.12'" },
     { name = "scikit-image", marker = "python_full_version >= '3.12'" },
     { name = "scikit-learn", marker = "python_full_version >= '3.12'" },
     { name = "scipy", marker = "python_full_version >= '3.12'" },
@@ -1190,6 +1200,7 @@ requires-dist = [
     { name = "matplotlib", specifier = ">=3.10.1" },
     { name = "numpy", specifier = ">=2.2.3" },
     { name = "opencv-python", specifier = ">=4.11.0.86" },
+    { name = "perlin-noise", specifier = ">=1.13" },
     { name = "scikit-image", specifier = ">=0.25.0" },
     { name = "scikit-learn", specifier = ">=1.6.1" },
     { name = "scipy", specifier = ">=1.15.2" },
