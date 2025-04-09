@@ -7,7 +7,7 @@ from scipy.io import savemat
 
 import subprocess
 
-def run_ods_ois(model):
+def call_ods_ois(model, mat_dir):
     # Path to the external Python interpreter if different from the main project's
     external_python = ".venv/bin/python3"
     
@@ -17,9 +17,9 @@ def run_ods_ois(model):
         "main.py",
         "--alg", "TEED " + model,
         "--model_name_list", model,
-        "--result_dir", "../../result/result_mat",
-        "--save_dir", "../../result/eval_output",
-        "--gt_dir", "../../result/gt_mat",
+        "--result_dir", "../../" + mat_dir,
+        "--save_dir", "../../" + mat_dir + "/eval_output",
+        "--gt_dir", "../../data/UDED/gt_mat",
         "--key", "result",
         "--file_format", ".mat",
         "--workers", "-1"
@@ -28,10 +28,10 @@ def run_ods_ois(model):
     # Call the script, changing to its directory
     subprocess.run(cmd, cwd="external/edge_eval")
 
-def generate_mat_files(model):
+def generate_mat_files(results_path):
     # === Paths ===
-    image_dir = os.path.join("result", "BIPED2UDED", model)
-    mat_dir = "result/result_mat"
+    image_dir = results_path
+    mat_dir = os.path.join(results_path, "result_mat")
     os.makedirs(mat_dir, exist_ok=True)
     for i, file in enumerate(os.listdir(image_dir)):
         if file.endswith(".png") or file.endswith(".jpg"):
@@ -40,8 +40,7 @@ def generate_mat_files(model):
             save_path = os.path.join(mat_dir, os.path.splitext(file)[0] + ".mat")
             savemat(save_path, {"result": img})
             print(f"File {i}, {file} saved as mat.")
-    
-    run_ods_ois(model)
+    return mat_dir
 
     ## Code for converting GT to mat
 
@@ -62,9 +61,14 @@ def generate_mat_files(model):
     #             }
     #         })
 
+def run_ods_ois(model, results_path):
+    mat_dir = generate_mat_files(results_path)
+    call_ods_ois(model, mat_dir)
+
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python eval.py <model>")
+    if len(sys.argv) != 3:
+        print("Usage: python eval.py <model> <checkpoint_path>")
         sys.exit(1)
     model = sys.argv[1]
-    generate_mat_files(model)
+    results_path = sys.argv[2]
+    run_ods_ois(model, results_path)

@@ -7,6 +7,7 @@ import numpy as np
 import torch
 import torch.optim as optim
 from torch.utils.data import DataLoader
+from eval import run_ods_ois
 # from thop import profile
 
 from types import SimpleNamespace
@@ -379,9 +380,16 @@ def run_teed(args, train_inf):
                            img_test_dir,
                            arg=args, test_resize=if_resize_img)
 
+        checkpoint_path = os.path.join(output_dir_epoch, '{0}_model.pth'.format(epoch))
         # Save model after end of every epoch
         torch.save(model.module.state_dict() if hasattr(model, "module") else model.state_dict(),
-                   os.path.join(output_dir_epoch, '{0}_model.pth'.format(epoch)))
+                   checkpoint_path)
+
+        # Test ods/ois score after every epoch
+        print(f"Testing ods/ois score after epoch {epoch}")
+        # call the function with the directory being img_test_dir
+        run_ods_ois("Classic", img_test_dir)
+
         if tb_writer is not None:
             tb_writer.add_scalar('loss',
                                  avg_loss,

@@ -27,5 +27,6 @@ members = ["external/edge_eval"]
 
 [dependency-groups]
 dev = [
+    "ipykernel>=6.29.5",
     "pylint>=3.3.6",
 ]
