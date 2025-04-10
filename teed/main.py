@@ -385,10 +385,11 @@ def run_teed(args, train_inf):
         torch.save(model.module.state_dict() if hasattr(model, "module") else model.state_dict(),
                    checkpoint_path)
 
-        # Test ods/ois score after every epoch
-        print(f"Testing ods/ois score after epoch {epoch}")
-        # call the function with the directory being img_test_dir
-        run_ods_ois("Classic", img_test_dir)
+        if epoch % 2 == 0:
+            # Test ods/ois score after every other epoch
+            print(f"Testing ods/ois score after epoch {epoch}")
+            # call the function with the directory being img_test_dir
+            run_ods_ois("Classic", img_test_dir)
 
         if tb_writer is not None:
             tb_writer.add_scalar('loss',

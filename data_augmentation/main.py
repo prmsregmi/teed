@@ -65,7 +65,7 @@ def list_data(base_dirs=None, data_name="BIPED", simple_list=False, check_files=
     #     cv_imshow(img, 'rgb image')
     #     cv_imshow(gt, 'gt image')
 
-def main(dataset_dir, rotation = False):
+def run_augmentation(dataset_dir, rotation = False):
     # Data augmentation
     augment_both = True  # to augment the RGB and target (edge_map) image at the same time
     augment_data(base_dir=dataset_dir, augment_both=augment_both, use_all_type=True, rotation=rotation)
@@ -80,4 +80,4 @@ if __name__=='__main__':
     #  put "/home/user_name/datasets"
     BIPED_main_dir ="synthetic_train/"
 
-    main(dataset_dir=BIPED_main_dir)
+    run_augmentation(dataset_dir=BIPED_main_dir)
