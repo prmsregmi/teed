@@ -310,10 +310,11 @@ def run_teed(args, train_inf):
     if_resize_img = False if args.test_data in ['BIPED', 'CID', 'MDBD'] else True
     if args.is_testing:
 
-        output_dir = os.path.join(args.res_dir, args.train_data+"2"+ args.test_data)
+        checkpoint_path_for_test = os.path.join(args.output_dir, args.checkpoint_data)
+        output_dir = os.path.join(args.res_dir,checkpoint_path_for_test)
         print(f"output_dir: {output_dir}")
 
-        test(checkpoint_path, dataloader_val, model, device,
+        test(checkpoint_path_for_test, dataloader_val, model, device,
              output_dir, args,if_resize_img)
 
         # Count parameters:

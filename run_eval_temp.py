@@ -1,27 +1,14 @@
 
-import subprocess
-def call_ods_ois(model, mat_dir):
-    # Path to the external Python interpreter if different from the main project's
-    external_python = ".venv/bin/python3"
-    
-    # Build the command
-    cmd = [
-        external_python,
-        "main.py",
-        "--alg", "TEED " + model,
-        "--model_name_list", model,
-        "--result_dir", "../../" + mat_dir,
-        "--save_dir", "../../" + mat_dir + "/eval_output",
-        "--gt_dir", "../../data/UDED/gt_mat",
-        "--key", "result",
-        "--file_format", ".mat",
-        "--workers", "-1"
-    ]
-    
-    # Call the script, changing to its directory
-    subprocess.run(cmd, cwd="external/edge_eval")
+import os
+from eval import generate_mat_files, call_ods_ois
 
 
-for i in range(7):
-    mat_dir = f"checkpoints/CLASSIC/{i}/UDED_res/result_mat"
-    call_ods_ois("Classic", mat_dir)
+    # Get all folders starting with "checkpoints" in current directory
+checkpoint_dirs = [d for d in os.listdir("result/") if d.startswith("checkpoints") and os.path.isdir(d)]
+
+# Loop through each checkpoints folder
+for checkpoint_dir in checkpoint_dirs:        
+    for i in range(0, 7):
+        img_dir = f"result/{checkpoint_dir}/CLASSIC/{i}/{i}_model.pth/fused/"
+        mat_dir = generate_mat_files(img_dir)
+        call_ods_ois("Classic", mat_dir)
