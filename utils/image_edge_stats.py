@@ -44,7 +44,7 @@ def analyze_folder(folder_path):
         dict: Dictionary containing percentage statistics
     """
     import os
-    from statistics import mean, median
+    from statistics import mean, median, stdev
     
     # Get all image files
     image_files = [f for f in os.listdir(folder_path) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
@@ -73,7 +73,8 @@ def analyze_folder(folder_path):
         'mean': mean(percentages),
         'median': median(percentages),
         'min': min(percentages),
-        'max': max(percentages)
+        'max': max(percentages),
+        'std': stdev(percentages)
     }
     
     print("\nSummary Statistics:")
@@ -81,6 +82,7 @@ def analyze_folder(folder_path):
     print(f"Median percentage: {stats['median']:.3f}") 
     print(f"Min percentage: {stats['min']:.3f}")
     print(f"Max percentage: {stats['max']:.3f}")
+    print(f"Standard deviation: {stats['std']:.3f}")
     
     return stats
 

@@ -20,7 +20,7 @@ adjust_lr = [4]  # Learning rate step size.
 workers = 8  # The number of workers for the dataloaders.
 tensorboard = true  # Use Tensorboard for logging.
 use_gpu = 0  # Use GPU.
-checkpoint_data = "5_model_original.pth"  # Checkpoint path.
+checkpoint_data = "3/3_model.pth"  # Checkpoint path.
 
 [image]
 img_width = 300  # Image width for training.

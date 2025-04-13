@@ -279,8 +279,8 @@ def run_teed(args, train_inf):
     ini_epoch = 0
     if not args.is_testing:
         if args.resume:
-            checkpoint_path2= os.path.join(args.output_dir, 'BIPED-54-B4',args.checkpoint_data)
-            ini_epoch=8
+            checkpoint_path2= os.path.join(args.output_dir, 'CLASSIC', args.checkpoint_data)
+            ini_epoch=3
             model.load_state_dict(torch.load(checkpoint_path2,
                                          map_location=device))
 
@@ -381,16 +381,9 @@ def run_teed(args, train_inf):
                            img_test_dir,
                            arg=args, test_resize=if_resize_img)
 
-        checkpoint_path = os.path.join(output_dir_epoch, '{0}_model.pth'.format(epoch))
         # Save model after end of every epoch
         torch.save(model.module.state_dict() if hasattr(model, "module") else model.state_dict(),
-                   checkpoint_path)
-
-        if epoch % 2 == 0:
-            # Test ods/ois score after every other epoch
-            print(f"Testing ods/ois score after epoch {epoch}")
-            # call the function with the directory being img_test_dir
-            run_ods_ois("Classic", img_test_dir)
+                   os.path.join(output_dir_epoch, '{0}_model.pth'.format(epoch)))
 
         if tb_writer is not None:
             tb_writer.add_scalar('loss',
