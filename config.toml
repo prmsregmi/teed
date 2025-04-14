@@ -1,12 +1,12 @@
 [general]
-is_testing = false  # Script in testing mode.
+is_testing = true  # Script in testing mode.
 
 [dataset]
 choose_test_data = 15  # Choose a dataset for testing: 0 - 15
 choose_train_data = -1  # Choose a dataset for training: 0 - 15
 
 [paths]
-output_dir = "checkpoints"  # The path to output the results.
+output_dir = "checkpoints/CLASSIC/"  # The path to output the results.
 res_dir = "result"  # Result directory.
 resume_chpt = "result/resume/"  # Resume training.
 
@@ -20,7 +20,7 @@ adjust_lr = [4]  # Learning rate step size.
 workers = 8  # The number of workers for the dataloaders.
 tensorboard = true  # Use Tensorboard for logging.
 use_gpu = 0  # Use GPU.
-checkpoint_data = "3/3_model.pth"  # Checkpoint path.
+checkpoint_data = "6/6_model.pth"  # Checkpoint path.
 
 [image]
 img_width = 300  # Image width for training.

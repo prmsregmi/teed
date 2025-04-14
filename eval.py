@@ -2,10 +2,14 @@ import os
 import cv2
 import sys
 import numpy as np
+import toml
+from teed.main import main
 from scipy.io import savemat
-
-
 import subprocess
+
+# Global variables
+original_config = toml.load("config.toml")
+
 
 def call_ods_ois(model, mat_dir):
     # Path to the external Python interpreter if different from the main project's
@@ -61,7 +65,32 @@ def generate_mat_files(results_path):
     #             }
     #         })
 
-def run_ods_ois(model, results_path):
+
+def run_inference():
+    global original_config
+    try:
+        for i in range(0, original_config["training"]["epochs"]):
+            config = toml.load("config.toml")
+            config["general"]["is_testing"] = True
+            config["training"]["checkpoint_data"] = f"{i}_model.pth"
+            config["paths"]["output_dir"] = f"checkpoints/CLASSIC/{i}/"
+            with open("config.toml", "w") as f:
+                toml.dump(config, f)
+            main()
+    finally:
+        # Restore original config
+        with open("config.toml", "w") as f:
+            toml.dump(original_config, f)
+
+def run_eval():      
+    global original_config
+    for i in range(0, original_config["training"]["epochs"]):
+        img_dir = f"result/checkpoints/CLASSIC/{i}/{i}_model.pth/fused/"
+        _ = generate_mat_files(img_dir)
+        call_ods_ois("Classic", img_dir + 'result_mat')
+
+
+def run_individual_ods_ois(model, results_path):
     mat_dir = generate_mat_files(results_path)
     call_ods_ois(model, mat_dir)
 
@@ -71,4 +100,6 @@ if __name__ == "__main__":
         sys.exit(1)
     model = sys.argv[1]
     results_path = sys.argv[2]
-    run_ods_ois(model, results_path)
+    run_individual_ods_ois(model, results_path)
+
+
