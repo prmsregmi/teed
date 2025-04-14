@@ -56,7 +56,7 @@ def dataset_info(dataset_name, is_linux=True):
                 'train_list': 'train_pair.lst',
                 'data_dir': 'data/synthetic_train/BIPED/',  # mean_rgb
                 'yita': 0.5,
-                'mean': [104.007, 116.669, 122.679, 137.86]
+                'mean': get_mean('data/synthetic_train/BIPED/') #[104.007, 116.669, 122.679, 137.86]
             },
             'BSDS': {
                 'img_height': 512, #321
@@ -179,6 +179,19 @@ def dataset_info(dataset_name, is_linux=True):
             }
         }
     return config[dataset_name]
+
+def get_mean(folder_path):
+    mean_bgr = np.zeros(3)  # B, G, R
+    count = 0
+    folder_path = os.path.join(folder_path, 'edges/imgs/train/rgbr/real')
+    for file in os.listdir(folder_path):
+        if file.endswith('.png') or file.endswith('.jpg'):
+            img = cv2.imread(os.path.join(folder_path, file))
+            mean_bgr += np.mean(img, axis=(0, 1))
+            count += 1
+    if count == 0:
+        raise ValueError("No images found in folder.")
+    return np.append(mean_bgr / count, 255.)
 
 class TestDataset(Dataset):
     def __init__(self,
