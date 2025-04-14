@@ -12,7 +12,7 @@ resume_chpt = "result/resume/"  # Resume training.
 
 [training]
 batch_size = 8  # The mini-batch size (default: 8)
-epochs = 7  # Number of training epochs (default: 25).
+epochs = 5  # Number of training epochs (default: 25).
 lr = 0.0008  # Initial learning rate. =1e-3
 lrs = [0.00008]  # LR for epochs.
 wd = 0.0002  # Weight decay (Good 5e-4/1e-4  )
@@ -20,7 +20,7 @@ adjust_lr = [4]  # Learning rate step size.
 workers = 8  # The number of workers for the dataloaders.
 tensorboard = true  # Use Tensorboard for logging.
 use_gpu = 0  # Use GPU.
-checkpoint_data = "6/6_model.pth"  # Checkpoint path.
+checkpoint_data = "2/2_model.pth"  # Checkpoint path.
 
 [image]
 img_width = 300  # Image width for training.

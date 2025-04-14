@@ -6,11 +6,10 @@ import toml
 from teed import main
 from scipy.io import savemat
 import subprocess
+import concurrent.futures
 
 # Global variables
 original_config = toml.load("config.toml")
-
-
 def call_ods_ois(model, mat_dir):
     # Path to the external Python interpreter if different from the main project's
     external_python = ".venv/bin/python3"
@@ -37,33 +36,32 @@ def generate_mat_files(results_path):
     image_dir = results_path
     mat_dir = os.path.join(results_path, "result_mat")
     os.makedirs(mat_dir, exist_ok=True)
-    for i, file in enumerate(os.listdir(image_dir)):
-        if file.endswith(".png") or file.endswith(".jpg"):
+    count = 0
+    for file in os.listdir(image_dir):
+        if file.endswith(".png") or file.endswith(".jpg") or file.endswith(".jpeg"):
             img = cv2.imread(os.path.join(image_dir, file), cv2.IMREAD_GRAYSCALE) 
             img = img.astype(np.float32) / 255.0  # Normalize if needed
             save_path = os.path.join(mat_dir, os.path.splitext(file)[0] + ".mat")
             savemat(save_path, {"result": img})
-            print(f"File {i}, {file} saved as mat.")
-    return mat_dir
+            count += 1
+    print(f"{count} files saved as mat.")
 
     ## Code for converting GT to mat
 
-    # gt_dir = "data/BIPED/BIPED/edges/edge_maps/test/rgbr"
-    # gt_mat_dir = "result/gt_mat"
+    # gt_dir = "data/xray/gt/"
+    # gt_mat_dir = "data/xray/gt_mat"
     # os.makedirs(gt_mat_dir, exist_ok=True)
 
-    # for file in os.listdir(gt_dir):
-    #     if file.endswith(".png") or file.endswith(".jpg"):
-    #         img = cv2.imread(os.path.join(gt_dir, file), cv2.IMREAD_GRAYSCALE)
-    #         img = img.astype(np.float32) / 255.0
-    #         dummy_seg = np.zeros_like(img, dtype=np.uint8)
-    #         save_path = os.path.join(gt_mat_dir, os.path.splitext(file)[0] + ".mat")
-    #         savemat(save_path, {
-    #             "groundTruth": {
-    #                 "Boundaries": img,
-    #                 "Segmentation": dummy_seg
-    #             }
-    #         })
+    # for filename in os.listdir(gt_dir):
+    #     if filename.lower().endswith(('.png', '.jpg')):
+    #         img = cv2.imread(os.path.join(gt_dir, filename), cv2.IMREAD_GRAYSCALE)
+    #         if img is None:
+    #             continue
+    #         img_uint8 = img.astype(np.uint8)
+    #         # Create a (1,1) object array holding a dictionary with key "Boundaries"
+    #         groundTruth = np.array([[{'Boundaries': img_uint8}]], dtype=object)
+    #         save_path = os.path.join(gt_mat_dir, os.path.splitext(filename)[0] + ".mat")
+    #         savemat(save_path, {'groundTruth': groundTruth})
 
 
 def run_inference():
@@ -82,17 +80,19 @@ def run_inference():
         with open("config.toml", "w") as f:
             toml.dump(original_config, f)
 
-def run_eval():      
+def run_eval():
     global original_config
-    for i in range(0, original_config["training"]["epochs"]):
+    epochs = original_config["training"]["epochs"]
+
+    def process_epoch(i):
         img_dir = f"result/checkpoints/CLASSIC/{i}/{i}_model.pth/fused/"
-        _ = generate_mat_files(img_dir)
-        call_ods_ois("Classic", img_dir + 'result_mat')
+        generate_mat_files(img_dir)
+        call_ods_ois("Classic",  os.path.join(results_path, "result_mat"))
 
-
-def run_individual_ods_ois(model, results_path):
-    mat_dir = generate_mat_files(results_path)
-    call_ods_ois(model, mat_dir)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=epochs) as executor:
+        futures = [executor.submit(process_epoch, i) for i in range(2, 3)]
+        for future in concurrent.futures.as_completed(futures):
+            future.result()
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
@@ -100,6 +100,7 @@ if __name__ == "__main__":
         sys.exit(1)
     model = sys.argv[1]
     results_path = sys.argv[2]
-    run_individual_ods_ois(model, results_path)
+    generate_mat_files(results_path)
+    call_ods_ois(model, os.path.join(results_path, "result_mat"))
 
 
