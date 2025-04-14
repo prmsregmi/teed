@@ -7,7 +7,6 @@ import numpy as np
 import torch
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from eval import run_ods_ois
 # from thop import profile
 
 from types import SimpleNamespace

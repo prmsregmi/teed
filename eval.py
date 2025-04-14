@@ -3,7 +3,7 @@ import cv2
 import sys
 import numpy as np
 import toml
-from teed.main import main
+from teed import main
 from scipy.io import savemat
 import subprocess
 
