@@ -1,18 +1,18 @@
 [general]
-is_testing = true  # Script in testing mode.
+is_testing = false  # Script in testing mode.
 
 [dataset]
 choose_test_data = 15  # Choose a dataset for testing: 0 - 15
 choose_train_data = -1  # Choose a dataset for training: 0 - 15
 
 [paths]
-output_dir = "checkpoints/CLASSIC/"  # The path to output the results.
+output_dir = "checkpoints"  # The path to output the results.
 res_dir = "result"  # Result directory.
 resume_chpt = "result/resume/"  # Resume training.
 
 [training]
 batch_size = 8  # The mini-batch size (default: 8)
-epochs = 5  # Number of training epochs (default: 25).
+epochs = 8  # Number of training epochs (default: 25).
 lr = 0.0008  # Initial learning rate. =1e-3
 lrs = [0.00008]  # LR for epochs.
 wd = 0.0002  # Weight decay (Good 5e-4/1e-4  )

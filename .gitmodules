@@ -4,3 +4,6 @@
 [submodule "synthetic_data"]
 	path = synthetic_data
 	url = git@github.com:prmsregmi/synthetic_data.git
+[submodule "ldc"]
+	path = ldc
+	url = git@github.com:prmsregmi/LDC.git
