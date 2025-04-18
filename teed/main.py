@@ -99,7 +99,7 @@ def train_one_epoch(epoch, dataloader, model, criterions, optimizer, device,
             # tmp_vis_name = str(batch_id)+'-results.png'
             # cv2.imwrite(os.path.join(imgs_res_folder, tmp_vis_name), vis_imgs)
             cv2.imwrite(os.path.join(imgs_res_folder, 'results.png'), vis_imgs)
-            break
+            # break
     loss_avg = np.array(loss_avg).mean()
     return loss_avg
 
