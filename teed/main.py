@@ -7,6 +7,9 @@ import numpy as np
 import torch
 import torch.optim as optim
 from torch.utils.data import DataLoader
+from eval import call_ods_ois
+import copy
+from multiprocessing import Process
 # from thop import profile
 
 from types import SimpleNamespace
@@ -96,6 +99,7 @@ def train_one_epoch(epoch, dataloader, model, criterions, optimizer, device,
             # tmp_vis_name = str(batch_id)+'-results.png'
             # cv2.imwrite(os.path.join(imgs_res_folder, tmp_vis_name), vis_imgs)
             cv2.imwrite(os.path.join(imgs_res_folder, 'results.png'), vis_imgs)
+            break
     loss_avg = np.array(loss_avg).mean()
     return loss_avg
 
@@ -310,7 +314,7 @@ def run_teed(args, train_inf):
     if args.is_testing:
 
         checkpoint_path_for_test = os.path.join(args.output_dir, args.checkpoint_data)
-        output_dir = os.path.join(args.res_dir,checkpoint_path_for_test)
+        output_dir = os.path.join(args.res_dir, checkpoint_path_for_test)
         print(f"output_dir: {output_dir}")
 
         test(checkpoint_path_for_test, dataloader_val, model, device,
@@ -343,6 +347,7 @@ def run_teed(args, train_inf):
     adjust_lr = args.adjust_lr
     k=0
     set_lr = args.lrs#[25e-4, 5e-6]
+    eval_processes = []
     for epoch in range(ini_epoch,args.epochs):
         if epoch%5==0: # before 7
 
@@ -383,7 +388,24 @@ def run_teed(args, train_inf):
         # Save model after end of every epoch
         torch.save(model.module.state_dict() if hasattr(model, "module") else model.state_dict(),
                    os.path.join(output_dir_epoch, '{0}_model.pth'.format(epoch)))
+        
+        # run inference and evaluation here
+        
+        checkpoint_path_for_test = os.path.join(output_dir_epoch, '{0}_model.pth'.format(epoch))
+        output_dir = os.path.join(args.res_dir,checkpoint_path_for_test)
+        print(f"checkpoint_path_for_test: {checkpoint_path_for_test}", output_dir)
+        tmp_args = copy.copy(args)
+        tmp_args.is_testing = True
+        test(checkpoint_path_for_test, dataloader_val, model, device, output_dir, tmp_args,if_resize_img)
 
+
+        if True:
+            time.sleep(5)
+            # Launch eval process
+            eval_proc = Process(target=call_ods_ois, args=("CLASSIC", os.path.join(output_dir, "fused")))
+            eval_proc.start()
+            eval_processes.append(eval_proc)
+            
         if tb_writer is not None:
             tb_writer.add_scalar('loss',
                                  avg_loss,
@@ -396,9 +418,10 @@ def run_teed(args, train_inf):
     print(num_param)
     print('-------------------------------------------------------')
 
-def main():
+def main(id):
     # os.system(" ".join(command))
     args, train_info = parse_config()
+    args.output_dir = args.output_dir + f"checkpoints_{id}"
     run_teed(args, train_info)
 
 if __name__ == '__main__':
